@@ -1,0 +1,34 @@
+---
+- name:  Install software
+  hosts:  logservers
+  become:  false
+
+  tasks:
+    - name:  Install {{ splunk_package }}
+      yum:
+        name:  "{{ splunk_package }}"
+        state:  present
+
+- name:  Initialize Splunk
+  hosts:  logservers
+  become_method:  su
+  become_user:  "{{ splunk_user }}"
+  become:  true
+
+  tasks:
+    - name:  First time run
+      shell:  "{{ splunk_bin }} start --accept-license"
+
+- name:  Start Splunk on reboot
+  hosts:  logservers
+  become:  false
+  tasks:
+    - name:  Setup Splunk init scripts
+      shell:  "{{ splunk_bin }} enable boot-start -user {{ splunk_user }}"
+
+    - name:  Open firewall
+      firewalld:
+        immediate:  True
+        permanent:  True
+        port:  "{{ splunk_port }}"
+        state:  enabled

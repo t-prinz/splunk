@@ -1,0 +1,7 @@
+---
+splunk_package:  http://192.168.122.1/~tprinz/Splunk/splunk-6.6.3-e21ee54bc796-linux-2.6-x86_64.rpm
+splunk_rpm:  splunk
+splunk_user:  splunk
+splunk_bin:  /opt/splunk/bin/splunk
+splunk_port:  8000/tcp
+splunk_mgmt_cmd:  status

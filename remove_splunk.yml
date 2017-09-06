@@ -1,0 +1,36 @@
+---
+- name:  Stop Splunk service
+  hosts:  logservers
+  become_method:  su
+  become_user:  "{{ splunk_user }}"
+  become:  true
+
+  tasks:
+    - name:  Shutdown splunk
+      shell:  "{{ splunk_bin }} stop"
+
+- name:  Splunk cleanup
+  hosts:  logservers
+  become:  false
+
+  tasks:
+    - name:  Remove Splunk init scripts
+      shell:  "{{ splunk_bin }} disable boot-start"
+
+    - name:  Remove {{ splunk_rpm }}
+      yum:
+        name:  "{{ splunk_rpm }}"
+        state:  absent
+
+    - name:  Remove user {{ splunk_user }}
+      user:
+        name:  "{{ splunk_user }}"
+        remove:  Yes
+        state:  absent
+
+    - name:  Close firewall
+      firewalld:
+        immediate:  True
+        permanent:  True
+        port:  "{{ splunk_port }}"
+        state:  disabled

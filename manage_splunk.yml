@@ -1,0 +1,14 @@
+---
+- name:  Manage Splunk
+  hosts:  logservers
+  become_method:  su
+  become_user:  "{{ splunk_user }}"
+  become:  true
+
+  tasks:
+    - name:  Run {{ splunk_mgmt_cmd }}
+      shell:  "{{ splunk_bin }} {{ splunk_mgmt_cmd }}"
+      register:  result
+
+    - debug:
+        msg:  "Standard out:  {{ result.stdout }}"
